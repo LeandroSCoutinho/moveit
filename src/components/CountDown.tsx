@@ -59,7 +59,7 @@ export function CountDown(){
                </button>
             ):(
             <> 
-                        {isActive ? (
+                {isActive ? (
                 <button 
                     type='button' 
                     className = {`${styles.countdownButton} ${styles.countdownButtonActive}`}

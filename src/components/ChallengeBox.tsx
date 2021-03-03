@@ -1,7 +1,8 @@
+
 import styles from '../style/components/ChallengeBox.module.css';
 
 export function ChallengeBox(){
-
+    
     const hasActiveChallenge = true;
 
     return (

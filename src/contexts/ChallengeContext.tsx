@@ -1,5 +1,6 @@
 import { createContext, ReactNode, useEffect, useState } from 'react';
 import challenges from '../../challenges.json';
+import Cookies from 'js-cookie';
 
 interface Challenge{
     type: 'body' | 'eye',
@@ -20,16 +21,19 @@ interface ChallengeContextData {
 }
 
 interface ChallengeProviderProp {
-    children: ReactNode
+    children: ReactNode,
+    level: number,
+    currentExperience: number,
+    challengesCompleted: number
 }
 
 export const ChallengeContext = createContext({} as ChallengeContextData);
 
-export function ChallengesProvider ({children}: ChallengeProviderProp){
+export function ChallengesProvider ({children, ...rest}: ChallengeProviderProp){
 
-    const [level,setLevel] = useState(1);
-    const [currentExperience, setCurrentExperience] = useState(0);
-    const [challengesCompleted, setChallengesCompleted] = useState(0);
+    const [level,setLevel] = useState(rest.level ?? 1);
+    const [currentExperience, setCurrentExperience] = useState(rest.currentExperience ?? 0);
+    const [challengesCompleted, setChallengesCompleted] = useState(rest.challengesCompleted ?? 0);
 
     const [activeChallenge, setActiveChallenge] = useState(null);
 
@@ -38,6 +42,12 @@ export function ChallengesProvider ({children}: ChallengeProviderProp){
     useEffect(() => {
         Notification.requestPermission()
     },[]);
+
+    useEffect(() =>{
+        Cookies.set('level', String(level));
+        Cookies.set('currentExperience', String(currentExperience));
+        Cookies.set('challengesCompleted', String(challengesCompleted));
+    },[level, currentExperience, challengesCompleted])
 
     function levelUp(){
         setLevel(level + 1);
@@ -60,7 +70,7 @@ export function ChallengesProvider ({children}: ChallengeProviderProp){
     }
 
     function resetChallenge(){
-        setActiveChallege(null);
+        setActiveChallenge(null);
     }
 
     function completeChallenge (){
@@ -79,7 +89,7 @@ export function ChallengesProvider ({children}: ChallengeProviderProp){
         }
 
         setCurrentExperience(finalExperience);
-        setActiveChallege(null);
+        setActiveChallenge(null);
         setChallengesCompleted(challengesCompleted + 1);
     }
     return (
